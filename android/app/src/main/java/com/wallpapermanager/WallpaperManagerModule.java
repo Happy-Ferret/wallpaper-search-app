@@ -1,6 +1,4 @@
-package com.helloworld;
-
-import android.widget.Toast;
+package com.wallpapermanager;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -12,28 +10,25 @@ import android.app.WallpaperManager;
 import java.io.InputStream;
 import java.net.URL;
 
-
-public class MyModule extends ReactContextBaseJavaModule {
+public class WallpaperManagerModule extends ReactContextBaseJavaModule {
   private ReactApplicationContext context;
 
-  public MyModule(ReactApplicationContext reactContext) {
+  public WallpaperManagerModule(ReactApplicationContext reactContext) {
     super(reactContext);
   }
 
   @Override
   public String getName() {
-    return "MyModule";
+    return "WallpaperManagerModule";
   }
 
   @ReactMethod
-  public void alert(String path) {
+  public void setNewWallpaperFromUrl(String path) {
       context = getReactApplicationContext();
       WallpaperManager wpm = WallpaperManager.getInstance(context);
       try{
         InputStream ins = new URL(path).openStream();
         wpm.setStream(ins);
       }catch(Exception ex){}
-
-    //Toast.makeText(getReactApplicationContext(), message, Toast.LENGTH_LONG).show();
   }
 }

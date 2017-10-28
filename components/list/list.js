@@ -8,7 +8,7 @@ import {NativeModules} from 'react-native';
 export default class ListComponent extends React.Component {
 
     itemSelected(details) {
-        NativeModules.MyModule.alert(details.src);
+        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.src);
     }
 
     render() {

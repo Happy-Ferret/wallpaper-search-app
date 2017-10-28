@@ -1,6 +1,6 @@
 package com.wallpapersearchapp;
 
-import com.helloworld.MyPackage;
+import com.wallpapermanager.WallpaperManagerPackage;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
@@ -24,7 +24,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new MyPackage()
+          new WallpaperManagerPackage()
       );
     }
 

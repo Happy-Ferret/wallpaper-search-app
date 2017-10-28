@@ -1,4 +1,4 @@
-package com.helloworld;
+package com.wallpapermanager;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MyPackage implements ReactPackage {
+public class WallpaperManagerPackage implements ReactPackage {
 
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -22,7 +22,7 @@ public class MyPackage implements ReactPackage {
                               ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    modules.add(new MyModule(reactContext));
+    modules.add(new WallpaperManagerModule(reactContext));
 
     return modules;
   }
