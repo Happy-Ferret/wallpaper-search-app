@@ -1,25 +1,21 @@
 import React from 'react';
-import {Keyboard, Button, StyleSheet, TextInput, View} from 'react-native';
+import {Text, Keyboard, TouchableOpacity, StyleSheet, TextInput, View} from 'react-native';
 
 export default class MenuComponent extends React.Component {
 
-    searchForImages(){
-        this.props.searchForImages(this.state.searchText);
+    _searchForImages(){
+        this.props.searchForImages(this.searchText);
         Keyboard.dismiss();
+
     }
 
     render() {
         return (
-            <View style={styles.menu}>
-                <View style={styles.menuContainer}>
-                    <TextInput onChangeText={(text) => this.setState({'searchText': text || ""})}  style={styles.searchInput} editable={true}/>
-                    <Button
-                        title="Search"
-                        color="#455A64"
-                        accessibilityLabel=""
-                        onPress={()=> {this.searchForImages()}}
-                    />
-                </View>
+            <View style={styles.menuContainer}>
+                <TextInput  underlineColorAndroid='rgba(0,0,0,0)' onChangeText={(text) => this.searchText = text || ''}  style={styles.searchInput} editable={true}/>
+                <TouchableOpacity style={styles.searchButton} onPress={this._searchForImages.bind(this)}>
+                    <Text adjustsFontSizeToFit={true} style={styles.buttonText}>Search</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -27,17 +23,27 @@ export default class MenuComponent extends React.Component {
 
 
 const styles = StyleSheet.create({
-    menu: {
-        backgroundColor: '#607D8B',
-        height: 50
-    },
     menuContainer: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
-        paddingLeft: 10
+        backgroundColor: '#455A64'
     },
     searchInput: {
-        width: 200
+        flex: 0.8,
+        backgroundColor: '#FFFFFF',
+        margin: 8,
+        borderRadius: 5,
+        fontStyle: 'italic',
+        fontSize: 16,
+        lineHeight: 16
+    },
+    searchButton: {
+        flex: 0.2,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonText: {
+        fontWeight: 'bold',
+        color: '#ECEFF1'
     }
 });

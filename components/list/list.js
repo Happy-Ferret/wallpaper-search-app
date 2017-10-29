@@ -8,21 +8,36 @@ import {NativeModules} from 'react-native';
 export default class ListComponent extends React.Component {
 
     itemSelected(details) {
-        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.src);
+        let newSrc = details.src.replace('_m.', '_h.');
+        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(newSrc);
+    }
+
+    endReached() {
+        this.props.getData();
+    }
+
+    componentDidMount() {
+        this.props.getData();
     }
 
     render() {
         return (
-            <View style={styles.listWrapper}>
+            <View>
                 <FlatList
+                    extraData={this.state}
                     data={this.props.items}
-                    renderItem={({item}) =>
-                        <ImageComponent
-                            style={styles.listItem}
-                            details={item}
-                            onItemSelected={this.itemSelected.bind(this)}
-                        ></ImageComponent>
+                    renderItem={({item, index}) => {
+                        return (
+                            <View style={index%2? styles.listItemOdd: styles.listItemEven}>
+                                <ImageComponent
+                                    details={item}
+                                    onItemSelected={this.itemSelected.bind(this)}
+                                ></ImageComponent>
+                            </View>
+                        )
+                        }
                     }
+                    onEndReached={this.endReached.bind(this)}
                 ></FlatList>
             </View>
         );
@@ -31,11 +46,11 @@ export default class ListComponent extends React.Component {
 
 
 const styles = StyleSheet.create({
-    listWrapper: {
-        backgroundColor: '#CFD8DC'
+    listItemOdd: {
+        backgroundColor: '#CFD8DC',
     },
-    listItem: {
-        borderWidth: 10
+    listItemEven: {
+        backgroundColor: '#ECEFF1'
     }
 });
 

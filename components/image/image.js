@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableHighlight, StyleSheet, Text, View, Image} from 'react-native';
+import {CheckBox, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
 
 export default class ImageComponent extends React.Component {
     _onAreaPress() {
@@ -8,16 +8,23 @@ export default class ImageComponent extends React.Component {
 
     render() {
         return (
-            <TouchableHighlight onPress={this._onAreaPress.bind(this)}>
                 <View style={styles.imageWrapper}>
-                    <Text>{this.props.details.title}</Text>
-                    <Image
-                        style={{width: 200, height: 200}}
+                    <Image style={styles.image}
                         source={{uri: this.props.details.src}}
                     />
+                    <View style={styles.details}>
+                        <TouchableOpacity style={styles.clickableOption} onPress={this._onAreaPress.bind(this)}>
+                            <View>
+                                <Text>Set wallpaper</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.clickableOption}>
+                            <View>
+                                <Text>Add to favorites</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </TouchableHighlight>
-
         );
     }
 }
@@ -25,7 +32,21 @@ export default class ImageComponent extends React.Component {
 const styles = StyleSheet.create({
     imageWrapper: {
         padding: 10,
-        borderBottomWidth: 1
+        flex: 1,
+        flexDirection: 'row'
+    },
+    image: {
+        width: 200,
+        height: 200,
+    },
+    details: {
+        flex: 1,
+        justifyContent: 'center',
+        marginLeft: 10
+    },
+    clickableOption: {
+        paddingTop: 5,
+        paddingBottom: 5
     }
 });
 

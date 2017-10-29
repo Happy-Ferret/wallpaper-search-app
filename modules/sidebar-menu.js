@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {ListItem, Header, SectionList, Text, View} from 'react-native';
 
 export default class SidebarMenu extends React.Component {
     static navigationOptions = ({navigation})=> {
@@ -10,7 +10,6 @@ export default class SidebarMenu extends React.Component {
     render() {
         return (
             <View>
-                <Text></Text>
             </View>
         );
     }
