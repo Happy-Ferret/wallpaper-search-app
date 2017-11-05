@@ -1,5 +1,7 @@
 import React from 'react';
-import {ListItem, Header, SectionList, Text, View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+
+import FavoritesComponent from './../components/favorites/favorites';
 
 export default class SidebarMenu extends React.Component {
     static navigationOptions = ({navigation})=> {
@@ -9,10 +11,16 @@ export default class SidebarMenu extends React.Component {
     };
     render() {
         return (
-            <View>
+            <View style={styles.sidebarMenu}>
+                <FavoritesComponent/>
             </View>
         );
     }
 }
 
 
+const styles = StyleSheet.create({
+    sidebarMenu: {
+        flex: 1
+    }
+});

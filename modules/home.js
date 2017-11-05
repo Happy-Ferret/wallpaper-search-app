@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Image, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
 import config from './../config/config';
 import ListComponent from '../components/list/list';
@@ -9,11 +9,20 @@ export default class HomeModule extends React.Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Images Search',
-            headerLeft: <TouchableOpacity style={styles.menuButton} onPress={() => {
-                navigation.navigate('Menu')
-            }}>
-                <Text style={styles.menuButtonText}>|||</Text>
-            </TouchableOpacity>
+            headerTitleStyle: {
+            },
+            headerLeft: (<TouchableOpacity
+                            style={styles.menuButton}
+                            onPress={() => {
+                                navigation.navigate('Menu')
+                            }}>
+                            <Text style={styles.menuButtonText}>|||</Text>
+                        </TouchableOpacity>),
+            headerRight: (<TouchableOpacity
+                style={styles.searchButton}
+                onPress={()=> {navigation.state.params.searchPress()}}>
+                <Image style={styles.searchImage} source={require('./../images/magnifier.png')}></Image>
+            </TouchableOpacity>)
         }
     };
 
@@ -21,11 +30,20 @@ export default class HomeModule extends React.Component {
         super(props);
         this.state = {
             imagesList: [],
-            ajaxInProgress: false
+            ajaxInProgress: false,
+            showSearchBox: false
         };
         this.searchTerm = '';
         this.idx = 0;
         this.ajaxInProgress = false;
+    }
+
+    searchPress(){
+        this.setState({showSearchBox: !this.state.showSearchBox});
+    }
+
+    componentWillMount() {
+        this.props.navigation.setParams({searchPress: this.searchPress.bind(this)});
     }
 
     getImagesDataCallback(responseJson) {
@@ -53,7 +71,7 @@ export default class HomeModule extends React.Component {
     }
 
     getImagesWithSearchTerm(searchTerm) {
-        if (searchTerm !== this.searchTerm) {
+        if (searchTerm !== this.searchTerm || (!searchTerm)) {
             this.idx = 0;
         }
 
@@ -78,16 +96,21 @@ export default class HomeModule extends React.Component {
             this.idx++;
             this.ajaxInProgress = false;
             this.setState({ajaxInProgress: this.ajaxInProgress});
-
-        });
+        }).catch((error)=> {
+            this.ajaxInProgress = false;
+            this.setState({ajaxInProgress: this.ajaxInProgress});
+        })
     }
 
     render() {
         return (
             <View style={styles.home}>
-                <View style={styles.menu}>
-                    <MenuComponent searchForImages={this.getImagesWithSearchTerm.bind(this)}></MenuComponent>
-                </View>
+                {this.state.showSearchBox === true &&
+                    <View style={styles.menu} elevation={5}>
+                        <MenuComponent searchForImages={this.getImagesWithSearchTerm.bind(this)}></MenuComponent>
+                    </View>
+                }
+
                 <View style={this.state.ajaxInProgress? styles.loader: styles.loaderHidden}>
                     <ActivityIndicator
                         animating={this.state.animating}
@@ -95,7 +118,7 @@ export default class HomeModule extends React.Component {
                         size="large"
                     />
                 </View>
-                <View style={styles.list}>
+                <View>
                     <ListComponent getData={this.getImagesData.bind(this)}
                                    items={this.state.imagesList}></ListComponent>
                 </View>
@@ -108,15 +131,19 @@ const styles = StyleSheet.create({
     home: {
         flex: 1
     },
-    list: {
-        flex: 2
-    },
     menu: {
         backgroundColor: '#607D8B',
         height: 50
     },
     menuButton: {
         paddingLeft: 20
+    },
+    searchButton: {
+        paddingRight: 20
+    },
+    searchImage: {
+        width: 20,
+        height: 20
     },
     menuButtonText: {
         fontSize: 30,

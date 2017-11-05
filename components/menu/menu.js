@@ -4,7 +4,7 @@ import {Text, Keyboard, TouchableOpacity, StyleSheet, TextInput, View} from 'rea
 export default class MenuComponent extends React.Component {
 
     _searchForImages(){
-        this.props.searchForImages(this.searchText);
+        this.props.searchForImages(this.searchText || '');
         Keyboard.dismiss();
 
     }
@@ -12,7 +12,7 @@ export default class MenuComponent extends React.Component {
     render() {
         return (
             <View style={styles.menuContainer}>
-                <TextInput  underlineColorAndroid='rgba(0,0,0,0)' onChangeText={(text) => this.searchText = text || ''}  style={styles.searchInput} editable={true}/>
+                <TextInput  underlineColorAndroid='rgba(0,0,0,0)' onChangeText={(text) => this.searchText = text}  style={styles.searchInput} editable={true}/>
                 <TouchableOpacity style={styles.searchButton} onPress={this._searchForImages.bind(this)}>
                     <Text adjustsFontSizeToFit={true} style={styles.buttonText}>Search</Text>
                 </TouchableOpacity>

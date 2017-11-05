@@ -1,9 +1,33 @@
 import React from 'react';
-import {CheckBox, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class ImageComponent extends React.Component {
-    _onAreaPress() {
+
+    constructor(props){
+        super(props);
+        this.state= {
+            url: ''
+        }
+    }
+
+    _onSetWallpaper() {
         this.props.onItemSelected(this.props.details);
+    }
+
+
+
+    _addToFavorites() {
+        let path = RNFetchBlob.fs.dirs.DocumentDir + '/images';
+        RNFetchBlob
+            .config({
+                path: path + '/img-'+ Date.now() + '.jpg',
+            })
+            .fetch('GET', this.props.details.src, {
+                'Cache-Control': 'no-store'
+            })
+            .then((res) => {})
+            .catch((err)=> {})
     }
 
     render() {
@@ -13,12 +37,12 @@ export default class ImageComponent extends React.Component {
                         source={{uri: this.props.details.src}}
                     />
                     <View style={styles.details}>
-                        <TouchableOpacity style={styles.clickableOption} onPress={this._onAreaPress.bind(this)}>
+                        <TouchableOpacity style={styles.clickableOption} onPress={this._onSetWallpaper.bind(this)}>
                             <View>
                                 <Text>Set wallpaper</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.clickableOption}>
+                        <TouchableOpacity style={styles.clickableOption} onPress={this._addToFavorites.bind(this)}>
                             <View>
                                 <Text>Add to favorites</Text>
                             </View>
@@ -30,19 +54,20 @@ export default class ImageComponent extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    imageWrapper: {
-        padding: 10,
-        flex: 1,
-        flexDirection: 'row'
-    },
+    // imageWrapper: {
+    //     flex: 1,
+    //     flexDirection: 'row',
+    //     position: 'relative'
+    // },
     image: {
-        width: 200,
-        height: 200,
+        height: 100,
+        resizeMode: 'contain'
     },
     details: {
         flex: 1,
         justifyContent: 'center',
-        marginLeft: 10
+        marginLeft: 10,
+        display: 'none'
     },
     clickableOption: {
         paddingTop: 5,
