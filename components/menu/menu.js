@@ -6,21 +6,25 @@ export default class MenuComponent extends React.Component {
     _searchForImages(){
         this.props.searchForImages(this.searchText || '');
         Keyboard.dismiss();
-
     }
 
     render() {
         return (
             <View style={styles.menuContainer}>
-                <TextInput  underlineColorAndroid='rgba(0,0,0,0)' onChangeText={(text) => this.searchText = text}  style={styles.searchInput} editable={true}/>
-                <TouchableOpacity style={styles.searchButton} onPress={this._searchForImages.bind(this)}>
-                    <Text adjustsFontSizeToFit={true} style={styles.buttonText}>Search</Text>
+                <TextInput
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    onChangeText={(text) => this.searchText = text}
+                    style={styles.searchInput}
+                    editable={true}/>
+                <TouchableOpacity
+                    style={styles.searchButton}
+                    onPress={this._searchForImages.bind(this)}>
+                    <Text style={styles.buttonText}>Search</Text>
                 </TouchableOpacity>
             </View>
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     menuContainer: {

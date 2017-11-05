@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, FlatList, Text, View} from 'react-native';
-import ImageComponent from './../image/image';
+import ImageTileComponent from '../imageTile/imageTile';
 
 import {NativeModules} from 'react-native';
 
@@ -10,12 +10,12 @@ export default class ListComponent extends React.Component {
         super(props);
     }
 
-    itemSelected(details) {
+    _itemSelected(details) {
         let newSrc = details.src.replace('_m.', '_h.');
         NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(newSrc);
     }
 
-    endReached() {
+    _endReached() {
         this.props.getData();
     }
 
@@ -34,15 +34,15 @@ export default class ListComponent extends React.Component {
                         renderItem={({item, index}) => {
                             return (
                                 <View style={index % 2 ? styles.listItemOdd : styles.listItemEven}>
-                                    <ImageComponent
+                                    <ImageTileComponent
                                         details={item}
-                                        onItemSelected={this.itemSelected.bind(this)}
-                                    ></ImageComponent>
+                                        onItemSelected={this._itemSelected.bind(this)}
+                                    ></ImageTileComponent>
                                 </View>
                             )
                         }
                         }
-                        onEndReached={this.endReached.bind(this)}
+                        onEndReached={this._endReached.bind(this)}
                     ></FlatList>
                     ): (< Text >No results found</Text>)
                 }
@@ -54,11 +54,9 @@ export default class ListComponent extends React.Component {
 
 const styles = StyleSheet.create({
     listItemOdd: {
-        backgroundColor: '#CFD8DC',
         flex: 1
     },
     listItemEven: {
-        backgroundColor: '#ECEFF1',
         flex: 1
     }
 });

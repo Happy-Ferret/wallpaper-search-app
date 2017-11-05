@@ -77,6 +77,7 @@ export default class HomeModule extends React.Component {
 
         this.searchTerm = searchTerm;
         this.getImagesData();
+        this.setState({showSearchBox: false});
     }
 
     fetchData(obj) {
@@ -99,7 +100,7 @@ export default class HomeModule extends React.Component {
         }).catch((error)=> {
             this.ajaxInProgress = false;
             this.setState({ajaxInProgress: this.ajaxInProgress});
-        })
+        });
     }
 
     render() {
@@ -133,7 +134,11 @@ const styles = StyleSheet.create({
     },
     menu: {
         backgroundColor: '#607D8B',
-        height: 50
+        height: 50,
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        zIndex: 100
     },
     menuButton: {
         paddingLeft: 20

@@ -1,5 +1,5 @@
 import React from 'react';
-import {CheckBox, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
+import {Switch, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class FavoritesComponent extends React.Component {
@@ -8,14 +8,15 @@ export default class FavoritesComponent extends React.Component {
         super(props);
 
         this.state = {
-            filesList: []
+            filesList: [],
+            flickrSwitchOn: true,
+            instagramSwitchOn: false
         };
 
-        this.getImagesList();
+        this._getImagesList();
     }
 
-
-    getImagesList() {
+    _getImagesList() {
         this.path = RNFetchBlob.fs.dirs.DocumentDir + '/images';
 
         RNFetchBlob.fs.ls(this.path)
@@ -26,23 +27,33 @@ export default class FavoritesComponent extends React.Component {
 
     render() {
         return (
-            <View>
-                <Text style={styles.heading}>Favorite Images:</Text>
+            <View style={styles.favoritesContainer}>
+                <Text style={styles.headingText}>Favorite Images:</Text>
                 <ScrollView horizontal={true}>
                     <View style={styles.scrollViewContent}>
                     {this.state.filesList.map(function(url, i){
-                        return <Image style={styles.image}
+                        return <Image style={styles.favoriteImage}
                                     source={{uri: 'file://' + this.path + '/' + url}}
                         ></Image>
                     }.bind(this))}
                     </View>
                 </ScrollView>
-                <Text style={styles.heading}>Fetch Images From:</Text>
+                <Text style={styles.headingText}>Fetch Images From:</Text>
                 <View style={styles.checkboxGroup}>
-                    <CheckBox/><Text>Flickr</Text>
+                    <Switch
+                        style={styles.checkboxGroupSwitch}
+                        onValueChange={(value) => this.setState({flickrSwitchOn: value})}
+                        value={this.state.flickrSwitchOn} />
+                    <Text
+                        style={styles.checkboxGroupText}>Flickr</Text>
                 </View>
                 <View style={styles.checkboxGroup}>
-                    <CheckBox/><Text>Instagram</Text>
+                    <Switch
+                        style={styles.checkboxGroupSwitch}
+                        onValueChange={(value) => this.setState({instagramSwitchOn: value})}
+                        value={this.state.instagramSwitchOn} />
+                    <Text
+                        style={styles.checkboxGroupText}>Instagram</Text>
                 </View>
             </View>
         );
@@ -50,20 +61,26 @@ export default class FavoritesComponent extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    favoritesContainer: {},
     scrollViewContent: {
-        flex: 1,
         flexDirection: 'row'
     },
-    heading: {
+    headingText: {
         padding: 10,
         fontSize: 16
     },
-    image: {
+    favoriteImage: {
         width: 200,
         height: 200
     },
     checkboxGroup: {
-
-    }
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 5
+    },
+    checkboxGroupText: {
+        marginLeft: 10
+    },
+    checkboxGroupSwitch:{}
 });
 
