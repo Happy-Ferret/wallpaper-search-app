@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import {Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class ImageComponent extends React.Component {
@@ -9,7 +9,9 @@ export default class ImageComponent extends React.Component {
 
         this.state = {
             showDetails: false
-        }
+        };
+
+        this.showDownloadAlert = true;
     }
 
     _onSetWallpaper() {
@@ -25,6 +27,33 @@ export default class ImageComponent extends React.Component {
             .fetch('GET', this.props.details.src)
             .then((res) => {})
             .catch((err)=> {})
+    }
+
+    _notShowAlertAgain() {
+        this.showDownloadAlert = false;
+    }
+
+    _downloadToDevice() {
+        RNFetchBlob
+            .config({
+                path : RNFetchBlob.fs.dirs.DownloadDir + '/img-'+ Date.now() + '.jpg',
+            })
+            .fetch('GET', this.props.details.src)
+            .then((res) => RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]))
+            .then((res) => {
+                if(this.showDownloadAlert) {
+                    Alert.alert(
+                        'Download Success',
+                        'Downloaded file is available under "Download" catalog',
+                        [
+                            {text: 'Dont show this message later', onPress: () => this._notShowAlertAgain()},
+                            {text: 'OK'}
+                        ],
+                        {cancelable: false}
+                    )
+                }
+            })
+            .catch((err) => {})
     }
 
     render() {
@@ -46,6 +75,11 @@ export default class ImageComponent extends React.Component {
                         <TouchableOpacity style={styles.detailsClickableOption} onPress={this._addToFavorites.bind(this)}>
                             <View>
                                 <Text style={styles.detailsText}>Add to favorites</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.detailsClickableOption} onPress={this._downloadToDevice.bind(this)}>
+                            <View>
+                                <Text style={styles.detailsText}>Download</Text>
                             </View>
                         </TouchableOpacity>
                     </TouchableOpacity>
