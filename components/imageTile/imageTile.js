@@ -92,7 +92,6 @@ export default class ImageComponent extends React.Component {
 const styles = StyleSheet.create({
     imageTileContainer: {
         flex: 1,
-        flex: 1,
         position: 'relative'
     },
     imageTouchable: {

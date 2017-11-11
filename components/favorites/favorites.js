@@ -1,6 +1,7 @@
 import React from 'react';
 import {Switch, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
-import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'react-native-fetch-blob';
+import config from './../../config/config';
 
 export default class FavoritesComponent extends React.Component {
 
@@ -9,8 +10,8 @@ export default class FavoritesComponent extends React.Component {
 
         this.state = {
             filesList: [],
-            flickrSwitchOn: true,
-            instagramSwitchOn: false
+            flickrSwitchOn: config.flickrActive,
+            unsplashSwitchOn: config.unsplashActive
         };
 
         this._getImagesList();
@@ -24,6 +25,28 @@ export default class FavoritesComponent extends React.Component {
                 this.setState({filesList: files})
             })
     }
+
+    _flickrSwitch(value) {
+       this.setState({flickrSwitchOn: value});
+
+       if(value === true){
+           this.setState({unsplashSwitchOn: false})
+       }
+    }
+
+    _unsplashSwitch(value) {
+        this.setState({unsplashSwitchOn: value});
+
+        if(value === true){
+            this.setState({flickrSwitchOn: false})
+        }
+    }
+
+    shouldComponentUpdate(props, state) {
+         config.flickrActive = state.flickrSwitchOn;
+
+         return state;
+     }
 
     render() {
         return (
@@ -42,7 +65,7 @@ export default class FavoritesComponent extends React.Component {
                 <View style={styles.checkboxGroup}>
                     <Switch
                         style={styles.checkboxGroupSwitch}
-                        onValueChange={(value) => this.setState({flickrSwitchOn: value})}
+                        onValueChange={this._flickrSwitch.bind(this)}
                         value={this.state.flickrSwitchOn} />
                     <Text
                         style={styles.checkboxGroupText}>Flickr</Text>
@@ -50,10 +73,10 @@ export default class FavoritesComponent extends React.Component {
                 <View style={styles.checkboxGroup}>
                     <Switch
                         style={styles.checkboxGroupSwitch}
-                        onValueChange={(value) => this.setState({instagramSwitchOn: value})}
-                        value={this.state.instagramSwitchOn} />
+                        onValueChange={this._unsplashSwitch.bind(this)}
+                        value={this.state.unsplashSwitchOn} />
                     <Text
-                        style={styles.checkboxGroupText}>Instagram</Text>
+                        style={styles.checkboxGroupText}>Unsplash</Text>
                 </View>
             </View>
         );

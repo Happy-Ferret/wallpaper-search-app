@@ -1,6 +1,8 @@
 import React from 'react';
 import {Image, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
+import config from './../config/config';
+
 import urlBuilder from './../services/url-builder.service';
 import ListComponent from '../components/list/list';
 import MenuComponent from '../components/menu/menu';
@@ -67,14 +69,20 @@ export default class HomeModule extends React.Component {
 
 
     getImagesData() {
-        let endpoint = urlBuilder.flickrAPIBuilder({
-            tags: this.searchTerm,
-            page: this.idx + 1
-        });
+        let endpoint = null;
 
-        this.fetchData({
-            endpoint: endpoint
-        });
+        if(config.flickrActive) {
+            endpoint = urlBuilder.flickrAPIBuilder({
+                tags: this.searchTerm,
+                page: this.idx + 1
+            });
+        }
+
+        if(endpoint) {
+            this.fetchData({
+                endpoint: endpoint
+            });
+        }
     }
 
     getImagesWithSearchTerm(searchTerm) {
