@@ -24,7 +24,7 @@ export default class ImageComponent extends React.Component {
             .config({
                 path: path + '/img-'+ Date.now() + '.jpg',
             })
-            .fetch('GET', this.props.details.src)
+            .fetch('GET', this.props.details.srcLarge)
             .then((res) => {})
             .catch((err)=> {})
     }
@@ -38,7 +38,7 @@ export default class ImageComponent extends React.Component {
             .config({
                 path : RNFetchBlob.fs.dirs.DownloadDir + '/img-'+ Date.now() + '.jpg',
             })
-            .fetch('GET', this.props.details.src)
+            .fetch('GET', this.props.details.srcLarge)
             .then((res) => RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]))
             .then((res) => {
                 if(this.showDownloadAlert) {
@@ -46,7 +46,7 @@ export default class ImageComponent extends React.Component {
                         'Download Success',
                         'Downloaded file is available under "Download" catalog',
                         [
-                            {text: 'Dont show this message later', onPress: () => this._notShowAlertAgain()},
+                            {text: 'Dont show again', onPress: () => this._notShowAlertAgain()},
                             {text: 'OK'}
                         ],
                         {cancelable: false}
@@ -60,7 +60,7 @@ export default class ImageComponent extends React.Component {
         return (
             <View style={styles.imageTileContainer}>
                 <TouchableOpacity style={styles.imageTouchable} onPress={()=> {this.setState({showDetails: true})}}>
-                    <Image style={styles.image}
+                    <Image style={[styles.image]}
                     source={{uri: this.props.details.src}}
                     />
                 </TouchableOpacity>
@@ -92,7 +92,7 @@ export default class ImageComponent extends React.Component {
 const styles = StyleSheet.create({
     imageTileContainer: {
         flex: 1,
-        flexDirection: 'row',
+        flex: 1,
         position: 'relative'
     },
     imageTouchable: {
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        height: 200,
-        width: '100%'
+        width: '100%',
+        height: 150
     },
     details: {
         flex: 1,

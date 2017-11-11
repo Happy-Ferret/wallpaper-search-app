@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
-import config from './../config/config';
+import urlBuilder from './../services/url-builder.service';
 import ListComponent from '../components/list/list';
 import MenuComponent from '../components/menu/menu';
 
@@ -47,10 +47,13 @@ export default class HomeModule extends React.Component {
     }
 
     getImagesDataCallback(responseJson) {
-        let imagesList = responseJson.items.map((item) => {
+        let imagesList = responseJson.photos.photo.map((item) => {
             return {
-                src: item.media.m,
-                title: item.title
+                src: item.url_s,
+                srcLarge: item.url_o,
+                title: item.title,
+                width: item.width_s,
+                height: item.height_s
             }
         });
 
@@ -64,7 +67,11 @@ export default class HomeModule extends React.Component {
 
 
     getImagesData() {
-        let endpoint = config.flickrAPI + this.searchTerm + '&idx=' + this.idx;
+        let endpoint = urlBuilder.flickrAPIBuilder({
+            tags: this.searchTerm,
+            page: this.idx + 1
+        });
+
         this.fetchData({
             endpoint: endpoint
         });

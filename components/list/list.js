@@ -11,8 +11,7 @@ export default class ListComponent extends React.Component {
     }
 
     _itemSelected(details) {
-        let newSrc = details.src.replace('_m.', '_h.');
-        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(newSrc);
+        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.srcLarge);
     }
 
     _endReached() {
@@ -43,6 +42,7 @@ export default class ListComponent extends React.Component {
                         }
                         }
                         onEndReached={this._endReached.bind(this)}
+                        onEndReachedThreshold = {1}
                     ></FlatList>
                     ): (< Text >No results found</Text>)
                 }
