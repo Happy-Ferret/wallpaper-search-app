@@ -2,11 +2,11 @@ import config from './../config/config';
 
 let urlBuilder = {
     flickrAPIBuilder: (params) => {
-        let url = config.flickrAPIBase;
-
-        params.tags? (url += config.flickrApiSearch): (url += config.flickrApiRecent);
+        let url = config.flickrAPIBase + config.flickrApiSearch;
+        let tags = params.tags? params.tags: 'mountains';
 
         Object.assign(params, {
+            tags: tags,
             api_key: config.flickrAPIKey,
             format: 'json',
             nojsoncallback: 1,
