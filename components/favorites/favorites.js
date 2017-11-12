@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
+import {Linking, Switch, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import config from './../../config/config';
 
@@ -38,8 +38,22 @@ export default class FavoritesComponent extends React.Component {
         this.setState({unsplashSwitchOn: value});
 
         if(value === true){
-            this.setState({flickrSwitchOn: false})
+            this.setState({flickrSwitchOn: false});
+            //Linking.openURL('https://unsplash.com/oauth/authorize?client_id=0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11&response_type=code&redirect_uri=myapp://people');
         }
+    }
+
+
+    componentDidMount() {
+        Linking.getInitialURL().then((ev) => {
+            if (ev) {
+                //console.error(ev);
+            }
+        });
+
+        Linking.addEventListener('url', (response)=> {
+            console.error(response);
+        });
     }
 
     shouldComponentUpdate(props, state) {

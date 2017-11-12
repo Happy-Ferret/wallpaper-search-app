@@ -4,7 +4,10 @@ const config = {
     flickrApiSearch: 'method=flickr.photos.search',
     flickrApiRecent: 'method=flickr.photos.getRecent',
     flickrActive: true,
-    unsplashActive: false
+    unsplashActive: false,
+    unsplashAPIBase: 'https://api.unsplash.com/',
+    unsplashAPISearch: 'search/photos?',
+    unsplashAPIKey: '0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11'
 };
 
 export default config;

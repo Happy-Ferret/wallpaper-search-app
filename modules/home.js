@@ -49,15 +49,29 @@ export default class HomeModule extends React.Component {
     }
 
     getImagesDataCallback(responseJson) {
-        let imagesList = responseJson.photos.photo.map((item) => {
-            return {
-                src: item.url_s,
-                srcLarge: item.url_o,
-                title: item.title,
-                width: item.width_s,
-                height: item.height_s
-            }
-        });
+        let imagesList = [];
+        if(config.flickrActive) {
+            imagesList = responseJson.photos.photo.map((item) => {
+                return {
+                    src: item.url_s,
+                    srcLarge: item.url_o,
+                    title: item.title,
+                    width: item.width_s,
+                    height: item.height_s
+                }
+            });
+        }
+        else {
+            imagesList = responseJson.results.map((item) => {
+                return {
+                    src: item.urls.small,
+                    srcLarge: item.urls.full,
+                    title: item.description,
+                    width: item.width,
+                    height: item.height
+                };
+            });
+        }
 
         if (this.idx) {
             this.setState({imagesList: this.state.imagesList.concat(imagesList)});
@@ -74,6 +88,12 @@ export default class HomeModule extends React.Component {
         if(config.flickrActive) {
             endpoint = urlBuilder.flickrAPIBuilder({
                 tags: this.searchTerm,
+                page: this.idx + 1
+            });
+        }
+        else {
+            endpoint = urlBuilder.usplashAPIBuilder({
+                query: this.searchTerm,
                 page: this.idx + 1
             });
         }

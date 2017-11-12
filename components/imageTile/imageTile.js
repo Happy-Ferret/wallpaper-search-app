@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import {ActivityIndicator, Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class ImageComponent extends React.Component {
@@ -8,14 +8,17 @@ export default class ImageComponent extends React.Component {
         super(props);
 
         this.state = {
-            showDetails: false
+            showDetails: false,
+            animating: false,
         };
 
         this.showDownloadAlert = true;
     }
 
     _onSetWallpaper() {
+        this.setState({animating: true});
         this.props.onItemSelected(this.props.details);
+        this.setState({animating: false});
     }
 
     _addToFavorites() {
@@ -34,6 +37,7 @@ export default class ImageComponent extends React.Component {
     }
 
     _downloadToDevice() {
+        this.setState({animating: true});
         RNFetchBlob
             .config({
                 path : RNFetchBlob.fs.dirs.DownloadDir + '/img-'+ Date.now() + '.jpg',
@@ -41,6 +45,7 @@ export default class ImageComponent extends React.Component {
             .fetch('GET', this.props.details.srcLarge)
             .then((res) => RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]))
             .then((res) => {
+                this.setState({animating: false});
                 if(this.showDownloadAlert) {
                     Alert.alert(
                         'Download Success',
@@ -82,6 +87,10 @@ export default class ImageComponent extends React.Component {
                                 <Text style={styles.detailsText}>Download</Text>
                             </View>
                         </TouchableOpacity>
+                        <ActivityIndicator
+                            animating={true}
+                            style={{opacity: this.state.animating? 1 : 0}}
+                        />
                     </TouchableOpacity>
                 }
             </View>
