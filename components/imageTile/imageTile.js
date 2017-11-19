@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import {CameraRoll, Platform, ActivityIndicator, Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class ImageComponent extends React.Component {
@@ -16,9 +16,11 @@ export default class ImageComponent extends React.Component {
     }
 
     _onSetWallpaper() {
-        this.setState({animating: true});
-        this.props.onItemSelected(this.props.details);
-        this.setState({animating: false});
+        if(Platform.OS === 'android') {
+            this.setState({animating: true});
+            this.props.onItemSelected(this.props.details);
+            this.setState({animating: false});
+        }
     }
 
     _addToFavorites() {
@@ -38,27 +40,42 @@ export default class ImageComponent extends React.Component {
 
     _downloadToDevice() {
         this.setState({animating: true});
+
         RNFetchBlob
             .config({
-                path : RNFetchBlob.fs.dirs.DownloadDir + '/img-'+ Date.now() + '.jpg',
+                path : RNFetchBlob.fs.dirs.DocumentDir + '/temp-images/img-'+ Date.now() + '.jpg'
             })
             .fetch('GET', this.props.details.srcLarge)
-            .then((res) => RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]))
             .then((res) => {
                 this.setState({animating: false});
-                if(this.showDownloadAlert) {
-                    Alert.alert(
-                        'Download Success',
-                        'Downloaded file is available under "Download" catalog',
-                        [
-                            {text: 'Dont show again', onPress: () => this._notShowAlertAgain()},
-                            {text: 'OK'}
-                        ],
-                        {cancelable: false}
-                    )
+
+                let path = res.path();
+                if(Platform.OS === 'android'){
+                    path = 'file:///' + path;
                 }
+
+                 CameraRoll.saveToCameraRoll(this.props.details.srcLarge)
+                     .then(()=> {
+                         if(this.showDownloadAlert) {
+                             Alert.alert(
+                                 'Download Success',
+                                 'Downloaded file is available in Photos/Gallery',
+                                 [
+                                     {text: 'Dont show again', onPress: () => this._notShowAlertAgain()},
+                                     {text: 'OK'}
+                                 ],
+                                 {cancelable: false}
+                             )
+                         }
+                     })
+                     .catch((err)=> {console.error(err)});
+
+
+                /*if(Platform.OS === 'android'){
+                    RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]);
+                }*/
             })
-            .catch((err) => {})
+            .catch((err) => {console.error(err)})
     }
 
     render() {

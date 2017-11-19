@@ -51,6 +51,7 @@ export default class HomeModule extends React.Component {
     getImagesDataCallback(responseJson) {
         let imagesList = [];
         if(config.flickrActive) {
+
             imagesList = responseJson.photos.photo.map((item) => {
                 return {
                     src: item.url_s,
@@ -59,6 +60,8 @@ export default class HomeModule extends React.Component {
                     width: item.width_s,
                     height: item.height_s
                 }
+            }).filter((item) => {
+                return item.srcLarge!== undefined
             });
         }
         else {
