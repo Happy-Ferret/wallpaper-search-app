@@ -89,11 +89,14 @@ export default class ImageComponent extends React.Component {
                 {
                     this.state.showDetails === true &&
                     <TouchableOpacity style={styles.details} onPress={()=> {this.setState({showDetails: false})}}>
-                        <TouchableOpacity style={styles.detailsClickableOption} onPress={this._onSetWallpaper.bind(this)}>
-                            <View>
-                                <Text style={styles.detailsText}>Set wallpaper</Text>
-                            </View>
-                        </TouchableOpacity>
+                        { Platform.OS === 'android' &&
+                            <TouchableOpacity style={styles.detailsClickableOption}
+                                              onPress={this._onSetWallpaper.bind(this)}>
+                                <View>
+                                    <Text style={styles.detailsText}>Set wallpaper</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
                         <TouchableOpacity style={styles.detailsClickableOption} onPress={this._addToFavorites.bind(this)}>
                             <View>
                                 <Text style={styles.detailsText}>Add to favorites</Text>

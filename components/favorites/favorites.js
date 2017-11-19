@@ -11,7 +11,7 @@ export default class FavoritesComponent extends React.Component {
         this.state = {
             filesList: [],
             flickrSwitchOn: config.flickrActive,
-            unsplashSwitchOn: config.unsplashActive
+            unsplashSwitchOn: !config.flickrActive
         };
 
         this._getImagesList();

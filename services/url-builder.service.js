@@ -1,5 +1,6 @@
 import config from './../config/config';
 
+let per_page = 40;
 let urlBuilder = {
     flickrAPIBuilder: (params) => {
         let url = config.flickrAPIBase + config.flickrApiSearch;
@@ -11,7 +12,7 @@ let urlBuilder = {
             format: 'json',
             nojsoncallback: 1,
             extras: 'url_o,o_dims,url_s',
-            per_page: 30,
+            per_page: per_page,
             sort: 'relevance'
         });
 
@@ -26,7 +27,7 @@ let urlBuilder = {
 
         Object.assign(params, {
             client_id: config.unsplashAPIKey,
-            per_page: 30
+            per_page: per_page
         });
 
         let parameters = Object.entries(params).map((entry)=> {
