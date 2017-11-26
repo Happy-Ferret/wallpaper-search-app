@@ -6,7 +6,8 @@ const config = {
     unsplashActive: false,
     unsplashAPIBase: 'https://api.unsplash.com/',
     unsplashAPISearch: 'search/photos?',
-    unsplashAPIKey: '0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11'
+    unsplashAPIKey: '0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11',
+    showDownloadAlert: true
 };
 
 export default config;

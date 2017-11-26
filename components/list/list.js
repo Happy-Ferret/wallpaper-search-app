@@ -1,16 +1,13 @@
 import React from 'react';
-import {StyleSheet, FlatList, Text, View} from 'react-native';
+import {NativeModules, StyleSheet, FlatList, Text, View} from 'react-native';
 import ImageTileComponent from '../imageTile/imageTile';
-
-import {NativeModules} from 'react-native';
-
 
 export default class ListComponent extends React.Component {
     constructor(props){
         super(props);
     }
 
-    _itemSelected(details) {
+    _setWallpaper(details) {
         NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.srcLarge);
     }
 
@@ -35,7 +32,7 @@ export default class ListComponent extends React.Component {
                                 <View style={index % 2 ? styles.listItemOdd : styles.listItemEven}>
                                     <ImageTileComponent
                                         details={item}
-                                        onItemSelected={this._itemSelected.bind(this)}
+                                        onItemSelected={this._setWallpaper.bind(this)}
                                     ></ImageTileComponent>
                                 </View>
                             )

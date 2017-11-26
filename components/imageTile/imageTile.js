@@ -1,6 +1,7 @@
 import React from 'react';
-import {CameraRoll, Platform, ActivityIndicator, Alert, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
-import RNFetchBlob from 'react-native-fetch-blob'
+import {Platform, ActivityIndicator, TouchableOpacity, StyleSheet, Text, View, Image} from 'react-native';
+import FileSystemHelper from './../../services/file-system.service';
+import config from './../../config/config';
 
 export default class ImageComponent extends React.Component {
 
@@ -11,8 +12,6 @@ export default class ImageComponent extends React.Component {
             showDetails: false,
             animating: false,
         };
-
-        this.showDownloadAlert = true;
     }
 
     _onSetWallpaper() {
@@ -24,65 +23,55 @@ export default class ImageComponent extends React.Component {
     }
 
     _addToFavorites() {
-        let path = RNFetchBlob.fs.dirs.DocumentDir + '/images';
-        RNFetchBlob
-            .config({
-                path: path + '/img-'+ Date.now() + '.jpg',
-            })
-            .fetch('GET', this.props.details.srcLarge)
-            .then((res) => {})
-            .catch((err)=> {})
-    }
+       FileSystemHelper.addToFavorites({
+           srcLarge: this.props.details.srcLarge
+       });
 
-    _notShowAlertAgain() {
-        this.showDownloadAlert = false;
+        this.setState({
+            showDetails: false
+        });
     }
 
     _downloadToDevice() {
         this.setState({animating: true});
 
-        RNFetchBlob
-            .config({
-                path : RNFetchBlob.fs.dirs.DocumentDir + '/temp-images/img-'+ Date.now() + '.jpg'
-            })
-            .fetch('GET', this.props.details.srcLarge)
-            .then((res) => {
-                this.setState({animating: false});
+        let successCallback = () => {
+            this.setState({
+                animating: false,
+                showDetails: false
+            });
+        };
 
-                let path = res.path();
-                if(Platform.OS === 'android'){
-                    path = 'file:///' + path;
-                }
+        let dontShowAgainCallback = () => {
+            config.showDownloadAlert = false;
+        };
 
-                 CameraRoll.saveToCameraRoll(this.props.details.srcLarge)
-                     .then(()=> {
-                         if(this.showDownloadAlert) {
-                             Alert.alert(
-                                 'Download Success',
-                                 'Downloaded file is available in Photos/Gallery',
-                                 [
-                                     {text: 'Dont show again', onPress: () => this._notShowAlertAgain()},
-                                     {text: 'OK'}
-                                 ],
-                                 {cancelable: false}
-                             )
-                         }
-                     })
-                     .catch((err)=> {console.error(err)});
+        FileSystemHelper.downloadToDevice({
+            successCallback: successCallback,
+            dontShowAgainCallback: dontShowAgainCallback,
+            srcLarge: this.props.details.srcLarge,
+        });
+    }
 
+    _removeFromDevice() {
+        let successCallback = () => {
+            this.props.details.favoritesItemRemoved();
+        };
 
-                /*if(Platform.OS === 'android'){
-                    RNFetchBlob.fs.scanFile([ { path : res.path(),  mime : 'image/jpeg' }]);
-                }*/
-            })
-            .catch((err) => {console.error(err)})
+        this.setState({
+            showDetails: false
+        });
+        FileSystemHelper.removeFromFavorites({
+            path: this.props.details.src,
+            successCallback: successCallback
+        });
     }
 
     render() {
         return (
             <View style={styles.imageTileContainer}>
                 <TouchableOpacity style={styles.imageTouchable} onPress={()=> {this.setState({showDetails: true})}}>
-                    <Image style={[styles.image]}
+                    <Image style={styles.image}
                     source={{uri: this.props.details.src}}
                     />
                 </TouchableOpacity>
@@ -90,23 +79,32 @@ export default class ImageComponent extends React.Component {
                     this.state.showDetails === true &&
                     <TouchableOpacity style={styles.details} onPress={()=> {this.setState({showDetails: false})}}>
                         { Platform.OS === 'android' &&
-                            <TouchableOpacity style={styles.detailsClickableOption}
-                                              onPress={this._onSetWallpaper.bind(this)}>
+                            <TouchableOpacity style={styles.detailsClickableOption} onPress={this._onSetWallpaper.bind(this)}>
                                 <View>
                                     <Text style={styles.detailsText}>Set wallpaper</Text>
                                 </View>
                             </TouchableOpacity>
                         }
-                        <TouchableOpacity style={styles.detailsClickableOption} onPress={this._addToFavorites.bind(this)}>
+                        {!this.props.details.favoritesList &&
+                        <TouchableOpacity style={styles.detailsClickableOption}
+                                          onPress={this._addToFavorites.bind(this)}>
                             <View>
                                 <Text style={styles.detailsText}>Add to favorites</Text>
                             </View>
                         </TouchableOpacity>
+                        }
                         <TouchableOpacity style={styles.detailsClickableOption} onPress={this._downloadToDevice.bind(this)}>
                             <View>
                                 <Text style={styles.detailsText}>Download</Text>
                             </View>
                         </TouchableOpacity>
+                        {this.props.details.favoritesList &&
+                        <TouchableOpacity style={styles.detailsClickableOption} onPress={this._removeFromDevice.bind(this)}>
+                            <View>
+                                <Text style={styles.detailsText}>Remove from favorites</Text>
+                            </View>
+                        </TouchableOpacity>
+                        }
                         <ActivityIndicator
                             animating={true}
                             style={{opacity: this.state.animating? 1 : 0}}
@@ -121,10 +119,10 @@ export default class ImageComponent extends React.Component {
 const styles = StyleSheet.create({
     imageTileContainer: {
         flex: 1,
-        position: 'relative'
+        position: 'relative',
     },
     imageTouchable: {
-        flex: 1
+        flex: 1,
     },
     image: {
         flex: 1,

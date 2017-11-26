@@ -1,7 +1,9 @@
 import React from 'react';
-import {Linking, Switch, ScrollView, Image, StyleSheet, Text, View} from 'react-native';
+import {NativeModules, Linking, Switch, ScrollView, StyleSheet, Text, View} from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import config from './../../config/config';
+import ImageTileComponent from '../imageTile/imageTile';
+
 
 export default class FavoritesComponent extends React.Component {
 
@@ -39,7 +41,7 @@ export default class FavoritesComponent extends React.Component {
 
         if(value === true){
             this.setState({flickrSwitchOn: false});
-            //Linking.openURL('https://unsplash.com/oauth/authorize?client_id=0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11&response_type=code&redirect_uri=myapp://people');
+            //Linking.openURL('https://unsplash.com/oauth/authorize?client_id=0dcdc8339dc5acd862f68e947934119feef542a9ec30e212935dba03156a0c11&response_type=code&redirect_uri=myapp://test');
         }
     }
 
@@ -62,16 +64,30 @@ export default class FavoritesComponent extends React.Component {
          return state;
      }
 
+    _setWallpaper() {
+        NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.srcLarge);
+    }
+
     render() {
         return (
-            <View style={styles.favoritesContainer}>
+            <View>
                 <Text style={styles.headingText}>Favorite Images:</Text>
                 <ScrollView horizontal={true}>
                     <View style={styles.scrollViewContent}>
                     {this.state.filesList.map(function(url, i){
-                        return <Image style={styles.favoriteImage}
-                                    source={{uri: 'file://' + this.path + '/' + url}}
-                        ></Image>
+                        return <View style={styles.favoriteImage}>
+                                <ImageTileComponent
+                                    details={
+                                        {
+                                            srcLarge: 'file://' + this.path + '/' + url,
+                                            src: 'file://' + this.path + '/' + url,
+                                            favoritesList: true,
+                                            favoritesItemRemoved: this._getImagesList.bind(this)
+                                        }
+                                    }
+                                    onItemSelected={this._setWallpaper.bind(this)}
+                            ></ImageTileComponent>
+                            </View>
                     }.bind(this))}
                     </View>
                 </ScrollView>
@@ -98,17 +114,16 @@ export default class FavoritesComponent extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    favoritesContainer: {},
+    favoriteImage: {
+        width: 200,
+        height: 150
+    },
     scrollViewContent: {
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     headingText: {
         padding: 10,
         fontSize: 16
-    },
-    favoriteImage: {
-        width: 200,
-        height: 200
     },
     checkboxGroup: {
         flexDirection: 'row',
