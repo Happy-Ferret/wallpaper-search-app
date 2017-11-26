@@ -1,6 +1,6 @@
 import config from './../config/config';
 import RNFetchBlob from 'react-native-fetch-blob';
-import {CameraRoll, Alert} from 'react-native';
+import {Platform, CameraRoll, Alert} from 'react-native';
 
 let FileSystemHelper = {
 
@@ -12,7 +12,12 @@ let FileSystemHelper = {
             .fetch('GET', obj.srcLarge)
             .then((res) => {
 
-                CameraRoll.saveToCameraRoll(obj.srcLarge)
+                let path = res.path();
+                if(Platform.OS === 'android'){
+                    path = 'file:///' + path;
+                }
+
+                CameraRoll.saveToCameraRoll(path)
                     .then(()=> {
                         if(config.showDownloadAlert) {
                             Alert.alert(
@@ -61,6 +66,19 @@ let FileSystemHelper = {
                 {cancelable: false}
             );
         })
+    },
+
+    getImagesList: async () => {
+        let path = RNFetchBlob.fs.dirs.DocumentDir + '/images';
+        let list = [];
+
+        await RNFetchBlob.fs.ls(path).then((files)=> {
+            list = files.reverse().map((item)=> {
+                return 'file://' + path + '/' + item
+            });
+        });
+
+        return list;
     }
 
 };

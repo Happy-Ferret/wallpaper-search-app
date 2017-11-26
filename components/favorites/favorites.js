@@ -3,7 +3,7 @@ import {NativeModules, Linking, Switch, ScrollView, StyleSheet, Text, View} from
 import RNFetchBlob from 'react-native-fetch-blob';
 import config from './../../config/config';
 import ImageTileComponent from '../imageTile/imageTile';
-
+import FileSystemHelper from './../../services/file-system.service';
 
 export default class FavoritesComponent extends React.Component {
 
@@ -20,12 +20,9 @@ export default class FavoritesComponent extends React.Component {
     }
 
     _getImagesList() {
-        this.path = RNFetchBlob.fs.dirs.DocumentDir + '/images';
-
-        RNFetchBlob.fs.ls(this.path)
-            .then((files) => {
-                this.setState({filesList: files})
-            })
+        FileSystemHelper.getImagesList().then((files) => {
+            this.setState({filesList: files})
+        });
     }
 
     _flickrSwitch(value) {
@@ -48,9 +45,7 @@ export default class FavoritesComponent extends React.Component {
 
     componentDidMount() {
         Linking.getInitialURL().then((ev) => {
-            if (ev) {
-                //console.error(ev);
-            }
+            if (ev) {}
         });
 
         Linking.addEventListener('url', (response)=> {
@@ -64,7 +59,7 @@ export default class FavoritesComponent extends React.Component {
          return state;
      }
 
-    _setWallpaper() {
+    _setWallpaper(details) {
         NativeModules.WallpaperManagerModule.setNewWallpaperFromUrl(details.srcLarge);
     }
 
@@ -79,8 +74,8 @@ export default class FavoritesComponent extends React.Component {
                                 <ImageTileComponent
                                     details={
                                         {
-                                            srcLarge: 'file://' + this.path + '/' + url,
-                                            src: 'file://' + this.path + '/' + url,
+                                            srcLarge: url,
+                                            src: url,
                                             favoritesList: true,
                                             favoritesItemRemoved: this._getImagesList.bind(this)
                                         }
